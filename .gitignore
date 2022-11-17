@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Other
+*.depend
+*.layout
+
+# Example
+opn.cpp
+
+SAOD_cw
