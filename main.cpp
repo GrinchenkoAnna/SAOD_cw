@@ -18,7 +18,6 @@ private:
 
     static unsigned int n; //current number of records
     static base* arr[]; //array of pointers to the class
-    static base** index_arr[];
 
 public:
     void putdata()
@@ -31,12 +30,12 @@ public:
 
     static void read();
     static void display();
-    static void index();
+    //static void index();
+    static void heapsort();
 };
 
 unsigned int base::n;
 base* base::arr[MAX];
-//base** base::index_arr[MAX];
 
 void base::read()
 {
@@ -94,23 +93,80 @@ void base::display()
     }
 }
 
-
-/*///??
-void base::index()
+void base::heapsort()
 {
-    for (int i = 0; i < n; i++)
+    int L = (MAX - 1)/2;
+    while (L >= 0)
     {
-        index_arr[i] = &arr[i];
-        //cout << i+1 << endl;
+        // building (L, n) pyramid
+        base* x = arr[L];
+        int i = L;
+
+        while (true)
+        {
+            int j;
+            if (i == 0) j = 1;
+            else j = 2*i;
+
+            if (j > MAX - 1) break;
+
+            if ((j < MAX - 1) && ((arr[j + 1] -> deposit_sum) <= (arr[j] -> deposit_sum))) j = j + 1;
+
+            if ((x -> deposit_sum) <= (arr[j] -> deposit_sum)) break;
+
+            arr[i] = arr[j];
+            i = j;
+        }
+        arr[i] = x;
+
+        L = L - 1;
     }
-}*/
+
+    int R = MAX - 2;
+    base* temp = nullptr;
+
+    while (R >= 1)
+    {
+        temp = arr[0];
+        arr[0] = arr[R];
+        arr[R] = temp;
+
+        R = R - 1;
+
+        // building (1, R) pyramid
+        base* x = arr[0];
+        int i = 0;
+
+        while (true)
+        {
+            int j;
+
+            if (i == 0) j = 1;
+            else j = 2*i;
+
+            if (j > R) break;
+
+            if ((j < R) && ((arr[j + 1] -> deposit_sum) <= (arr[j] -> deposit_sum))) j = j + 1;
+
+            if ((x -> deposit_sum) <= (arr[j] -> deposit_sum)) break;
+
+            arr[i] = arr[j];
+            i = j;
+        }
+        arr[i] = x;
+    }
+
+    //for (int k = 0; k < 4000; k++) arr[k] -> putdata();
+}
 
 
 int main()
 {
     base::read();
     base::display();
-    //base::index();
+
+    base::heapsort();
+    base::display();
 
     return 0;
 }
