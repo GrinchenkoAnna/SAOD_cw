@@ -31,7 +31,7 @@ public:
     static void read();
     static void display();
     //static void index();
-    static void heapsort();
+    static void heapsort(int first, int last);
 };
 
 unsigned int base::n;
@@ -93,9 +93,9 @@ void base::display()
     }
 }
 
-void base::heapsort()
+void base::heapsort(int first, int last)
 {
-    int L = (MAX - 1)/2;
+    int L = (last - 1)/2;
     while (L >= 0)
     {
         // building (L, n) pyramid
@@ -108,9 +108,9 @@ void base::heapsort()
             if (i == 0) j = 1;
             else j = 2*i;
 
-            if (j > MAX - 1) break;
+            if (j > last - 1) break;
 
-            if ((j < MAX - 1) && ((arr[j + 1] -> deposit_sum) <= (arr[j] -> deposit_sum))) j = j + 1;
+            if ((j < last - 1) && ((arr[j + 1] -> deposit_sum) <= (arr[j] -> deposit_sum))) j = j + 1;
 
             if ((x -> deposit_sum) <= (arr[j] -> deposit_sum)) break;
 
@@ -122,7 +122,7 @@ void base::heapsort()
         L = L - 1;
     }
 
-    int R = MAX - 2;
+    int R = last - 1;
     base* temp = nullptr;
 
     while (R >= 1)
@@ -156,7 +156,7 @@ void base::heapsort()
         arr[i] = x;
     }
 
-    //for (int k = 0; k < 4000; k++) arr[k] -> putdata();
+    for (int k = 0; k < 4000; k++) arr[k] -> putdata();
 }
 
 
@@ -165,8 +165,8 @@ int main()
     base::read();
     base::display();
 
-    base::heapsort();
-    base::display();
+    base::heapsort(0, 4000);
+    //base::display();
 
     return 0;
 }
