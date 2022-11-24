@@ -182,64 +182,50 @@ int base::comparision(char* str1, char* str2)
     arr2[4] = str2[0];
     arr2[5] = str2[1];
 
-    /*for(int i = 0, j = 0; j < 6 && i < 10; i++)
-    {
-        if(str1[i] != '-' && str2[i] != '-')
-        {
-            arr1[j] = str1[i];
-            arr2[j] = str2[i];
-            //cout << "i = " << i  << " " << "j = " << j << endl;
-            //cout << "arr1[j] = " << arr1[j]  << " " << "arr2[j] = " << arr2[j] << endl;
-            j++;
-        }
-    }*/
-
-    int data1, data2;
-    sscanf(arr1, "%d", &data1);
-    sscanf(arr2, "%d", &data2);
-
-    //cout << "data1 = " << data1  << " " << "data2 = " << data2 << endl;
-    //cout << "res = " << res << endl;
-
-    return data1 - data2;
+    return atoi(arr1) - atoi(arr2);
 }
 
 void base::heapsort(int first, int last)
 {
     cout << "First = " << first << ", last = " << last << endl;
 
-    int L = last/2;
+    int L = first + (last - first)/2;
+    cout << "First L = " << L << endl;
     while (L >= first)
     {
         // building (L, n) pyramid
         base* x = arr[L];
-        int i = L;
+        int i = L - first;
+        //cout << "L = " << L << endl;
 
         while (true)
         {
             int j;
             if (i == 0) j = 1;
             else j = 2*i;
+            //cout << "i1 = " << i << " j1 = " << j << endl;
 
             int compare1, compare2;
 
-            if (j > last) break;
+            if (j + first > last) break;
 
-            compare1 = comparision(arr[j + 1] -> deposit_date,  arr[j] -> deposit_date);
-            if ((j < last) && (compare1 <= 0)) j = j + 1;
+            compare1 = comparision(arr[j + 1 + first] -> deposit_date,  arr[j + first] -> deposit_date);
+            if ((j + first < last) && (compare1 <= 0)) j = j + 1;
 
-            compare2 = comparision(x -> deposit_date, arr[j] -> deposit_date);
+            compare2 = comparision(x -> deposit_date, arr[j + first] -> deposit_date);
             if ( compare2 <= 0) break;
 
-            arr[i] = arr[j];
+            arr[i + first] = arr[j + first];
             i = j;
         }
-        arr[i] = x;
+        arr[i + first] = x;
 
         L = L - 1;
     }
 
     int R = last;
+    cout << "First R = " << R << endl;
+
     base* temp = nullptr;
 
     while (R >= first + 1)
@@ -249,10 +235,11 @@ void base::heapsort(int first, int last)
         arr[R] = temp;
 
         R = R - 1;
+        //cout << "R = " << R << endl;
 
         // building (1, R) pyramid
-        base* x = arr[first];
-        int i = first;
+        int i = 0;
+        base* x = arr[i + first];
 
         while (true)
         {
@@ -261,19 +248,20 @@ void base::heapsort(int first, int last)
 
             if (i == 0) j = 1;
             else j = 2*i;
+            //cout << "i2 = " << i << " j2 = " << j << endl;
 
-            if (j > R) break;
+            if (j + first > R) break;
 
-            compare1 = comparision(arr[j + 1] -> deposit_date,  arr[j] -> deposit_date);
-            if ((j < R) && (compare1 <= 0)) j = j + 1;
+            compare1 = comparision(arr[j + 1 + first] -> deposit_date,  arr[j + first] -> deposit_date);
+            if ((j + first < R) && (compare1 <= 0)) j = j + 1;
 
-            compare2 = comparision(x -> deposit_date, arr[j] -> deposit_date);
+            compare2 = comparision(x -> deposit_date, arr[j + first] -> deposit_date);
             if (compare2 <= 0) break;
 
-            arr[i] = arr[j];
+            arr[i + first] = arr[j + first];
             i = j;
         }
-        arr[i] = x;
+        arr[i + first] = x;
     }
 
     for (int k = first; k <= last; k++)
