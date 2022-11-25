@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+#include <math.h>
 
 using namespace std;
 
@@ -8,6 +9,8 @@ const unsigned int LD_NAME = 30;
 const unsigned int L_DATE = 10;
 const unsigned int LA_NAME = 22;
 const unsigned int MAX = 4000;
+
+//typedef struct queue
 
 class base
 {
@@ -31,12 +34,12 @@ public:
 
     static void read();
     static void display();
+    static void heapsort(int number); //first sorting by deposit sum
+    static int comparision(char* str1, char* str2); //for heapsort(int, int)
+    static void heapsort(int first, int last); //second sorting by deposit date in one group of deposit sum
+    static void final_sorting(); // sorting by deposit date in each group of deposit sum
 
-    static void heapsort(int number);
-    static int comparision(char* str1, char* str2); /// TO DO
-    static void heapsort(int first, int last);
-    static void final_sorting();
-
+    static void sum_search(unsigned short key);
 };
 
 unsigned int base::n;
@@ -187,10 +190,10 @@ int base::comparision(char* str1, char* str2)
 
 void base::heapsort(int first, int last)
 {
-    cout << "First = " << first << ", last = " << last << endl;
+    //cout << "First = " << first << ", last = " << last << endl;
 
     int L = first + (last - first)/2;
-    cout << "First L = " << L << endl;
+    //cout << "First L = " << L << endl;
     while (L >= first)
     {
         // building (L, n) pyramid
@@ -224,7 +227,7 @@ void base::heapsort(int first, int last)
     }
 
     int R = last;
-    cout << "First R = " << R << endl;
+    //cout << "First R = " << R << endl;
 
     base* temp = nullptr;
 
@@ -264,14 +267,14 @@ void base::heapsort(int first, int last)
         arr[i + first] = x;
     }
 
-    for (int k = first; k <= last; k++)
+    /*for (int k = first; k <= last; k++)
     {
         cout << k << ")" << endl;
         arr[k] -> putdata();
-    }
+    }*/
 }
 
-void base::final_sorting() /// FIX! not sorting for deposit_sum < 50000 !
+void base::final_sorting()
 {
     int a = 0, b, temp;
     while (a < MAX)
@@ -283,28 +286,72 @@ void base::final_sorting() /// FIX! not sorting for deposit_sum < 50000 !
         b = a;
         a = temp;
 
-        cout << "*******************************************" << endl;
-        cout << "a = " << a << ", b = " << b << endl;
-
         base::heapsort(a, b);
 
         a = b + 1;
 
-        cout << "a = " << a << ", b = " << b << endl;
-        cout << "*******************************************" << endl;
-
-        getchar();
+        //getchar();
     }
 }
 
+void base::sum_search(unsigned short key)
+{
+    int L = 0, R = MAX - 1, m, a = -1, b;
+
+    while(L < R)
+    {
+        m = L + floor((R - L)/2);
+        if((arr[m] -> deposit_sum) > key)
+        {
+            L = m + 1;
+        }
+        else
+        {
+            R = m;
+        }
+    }
+
+    if((arr[L] -> deposit_sum) == key) a = L;
+
+    if(a >= 0) ///write all records to the queue
+    {
+        int i = a, c = 0;
+        while ((arr[i] -> deposit_sum) == key)
+        {
+            arr[i] -> putdata();
+            i++;
+            c++;
+        }
+        b = i - 1;
+    }
+    else cout << "The element with a key = " << key << " does not exist" << endl << endl;
+}
 
 int main()
 {
     base::read();
-    //base::display();
-    base::heapsort(MAX);
 
+    base::heapsort(MAX);
     base::final_sorting();
+    //base::display();
+
+    unsigned short X;
+    cout << "Enter search key (5000 - 50000, step = 5000): ";
+    cin >> X;
+    cout << endl;
+    base::sum_search(X);
+
+    /*base::sum_search(5000);
+    base::sum_search(10000);
+    base::sum_search(15000);
+    base::sum_search(20000);
+    base::sum_search(25000);
+    base::sum_search(30000);
+    base::sum_search(35000);
+    base::sum_search(40000);
+    base::sum_search(45000);
+    base::sum_search(50000);
+    base::sum_search(50001);*/
 
     return 0;
 }
