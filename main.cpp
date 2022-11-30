@@ -9,6 +9,7 @@ const unsigned int L_DATE = 10;
 const unsigned int LA_NAME = 22;
 const unsigned int MAX = 4000;
 
+//records from the file
 struct base
 {
     char full_name_depositor[LD_NAME];
@@ -17,6 +18,7 @@ struct base
     char full_name_advocate[LA_NAME];
 };
 
+//queue with search results
 struct search_res_queue
 {
     base *inf;
@@ -58,7 +60,26 @@ void delete_queue() //make the queue empty
     qn = 0;
 }
 
-void read_base()
+void display_queue() //print the queue (all records)
+{
+    search_res_queue *p = qhead;
+
+    int i = 0;
+    char ch = 'y';
+
+    while(p)
+    {
+        cout << p -> inf -> full_name_depositor << endl;
+        cout << p -> inf -> deposit_sum << endl;
+        cout << p -> inf -> deposit_date << endl;
+        cout << p -> inf -> full_name_advocate << endl << endl;
+
+        p = p -> next;
+        i++;
+    }
+}
+
+void read_base() //to RAM
 {
     ifstream in;
     in.open("testBase3.dat", ios::binary);
@@ -82,7 +103,7 @@ void read_base()
     cout << "Reading " << n << " records\n";
 }
 
-void display()
+void display() //20 records
 {
     for (int i = 0; i < n; i++)
     {
@@ -118,7 +139,7 @@ void display()
     }
 }
 
-void heapsort(int number)
+void heapsort(int number) //sort by deposit sum
 {
     int L = (number - 1)/2;
     while (L >= 0)
@@ -214,7 +235,7 @@ int comparision(char* str1, char* str2)
     return atoi(arr1) - atoi(arr2);
 }
 
-void heapsort(int first, int last)
+void heapsort(int first, int last) //sort by deposit date
 {
     //cout << "First = " << first << ", last = " << last << endl;
 
@@ -304,7 +325,7 @@ void heapsort(int first, int last)
     }*/
 }
 
-void final_sorting()
+void final_sorting() //sort by deposit sum & deposit date
 {
     int a = 0, b, temp;
     while (a < MAX - 2)
@@ -323,7 +344,7 @@ void final_sorting()
     }
 }
 
-void sum_search(unsigned short key)
+void sum_search(unsigned short key) //search by deposit sum and add records to the queue
 {
     cout << "Key = " << key << endl;
     int L = 0, R = MAX - 1, m, a = -1, b;
@@ -331,38 +352,29 @@ void sum_search(unsigned short key)
     while(L < R)
     {
         m = L + floor((R - L)/2);
-        //cout << "m = " << m << endl;
 
         if((arr[m] -> deposit_sum) > key)
         {
             L = m + 1;
-            //cout << "L = " << m << endl;
         }
         else
         {
             R = m;
-            //cout << "R = " << m << endl;
         }
     }
 
     if((arr[L] -> deposit_sum) == key) a = L;
-    //cout << "a = " << a << endl;
 
     if(a >= 0)
     {
         int i = a, c = 0;
         while ((arr[i] -> deposit_sum) == key && i < MAX - 1)
         {
-            /*cout << arr[i] -> full_name_depositor << endl;
-            cout << arr[i] -> deposit_sum << endl;
-            cout << arr[i] -> deposit_date << endl;
-            cout << arr[i] -> full_name_advocate << endl << endl;*/
-            //cout << "i = " << i << endl;
+            add_to_queue(arr[i]);
             i++;
             c++;
         }
         b = i - 1;
-        //cout << "b = " << b << endl;
         cout << "Records: " << c << endl;
     }
     else cout << "The element with a key = " << key << " does not exist" << endl << endl;
@@ -377,16 +389,7 @@ int main()
     final_sorting();
 
     sum_search(5000);
-    sum_search(10000);
-    sum_search(15000);
-    sum_search(20000);
-    sum_search(25000);
-    sum_search(30000);
-    sum_search(35000);
-    sum_search(40000);
-    sum_search(45000);
-    sum_search(50000);
-    sum_search(50001);
+    display_queue();
 
     return 0;
 }
