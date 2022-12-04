@@ -4,10 +4,13 @@
 
 using namespace std;
 
+
 const unsigned int LD_NAME = 30;
 const unsigned int L_DATE = 10;
 const unsigned int LA_NAME = 22;
 const unsigned int MAX = 4000;
+
+const unsigned int M = 2;
 
 //records from the file
 struct base
@@ -25,7 +28,91 @@ struct search_res_queue
     search_res_queue *next;
 };
 
-/// add struct for tree
+//tree
+struct node
+{
+    base *data;
+    node *left;
+    node *right;
+    int balance;
+};
+
+node *add_to_tree(base *D, node *p)
+{
+    int balance;
+    bool VR = 1, HR = 1;
+    node *q;
+
+
+    if(p == nullptr)
+    {
+        node *p = new node;
+        p -> data = D;
+        cout << "p -> data: " << p -> data << endl;
+        p -> left = p -> right = nullptr;
+        p -> balance = 0;
+        VR = true;
+    }
+    else
+    {
+        if(p -> data < D)
+        {
+            cout << '0' << endl;
+            add_to_tree(D, p -> left);
+            if(VR)
+            {
+                if(p -> balance == 0)
+                {
+                    q = p -> left;
+                    p -> left = q -> right;
+                    q -> right = p;
+                    p = q;
+                    q -> balance = 1;
+                    VR = false;
+                    HR = true;
+                    cout << '2' << endl;
+                }
+                else
+                {
+                    p -> balance = 0;
+                    HR = true;
+                    cout << '3' << endl;
+                }
+            }
+            else HR = false;
+
+        }
+        if(p -> data > D)
+        {
+            cout << '4' << endl;
+            add_to_tree(D, p -> right);
+            if(VR)
+            {
+                p -> balance = 1;
+                VR = false;
+                HR = true;
+            }
+            if(HR)
+            {
+                if(p -> balance > 0)
+                {
+                    q = p -> right;
+                    p -> right = q -> left;
+                    p -> balance = 0;
+                    q -> balance = 0;
+                    q -> left = p;
+                    p = q;
+                    VR = true;
+                    HR = false;
+                    cout << '5' << endl;
+                }
+                else HR = false;
+            }
+        }
+    }
+    //delete if void
+    return p;
+}
 
 base *arr[MAX]; //array of pointers
 int n; //current number of records
@@ -64,9 +151,6 @@ void display_queue() //print the queue (all records)
 {
     search_res_queue *p = qhead;
 
-    int i = 0;
-    char ch = 'y';
-
     while(p)
     {
         cout << p -> inf -> full_name_depositor << endl;
@@ -75,8 +159,25 @@ void display_queue() //print the queue (all records)
         cout << p -> inf -> full_name_advocate << endl << endl;
 
         p = p -> next;
-        i++;
     }
+}
+
+node *create_tree()
+{
+    node *root = nullptr;
+    search_res_queue *p = qhead;
+
+    cout << endl;
+
+    while(p)
+    {
+        root = add_to_tree(p -> inf, root);
+        cout << "root: " << root << endl << endl;
+
+
+        p = p -> next;
+    }
+    return root;
 }
 
 void read_base() //to RAM
@@ -380,6 +481,7 @@ void sum_search(unsigned short key) //search by deposit sum and add records to t
     else cout << "The element with a key = " << key << " does not exist" << endl << endl;
 }
 
+
 int main()
 {
     read_base();
@@ -389,7 +491,9 @@ int main()
     final_sorting();
 
     sum_search(5000);
-    display_queue();
+    //display_queue();
+    node *root = create_tree();
+    cout << "root: " << root << endl << endl;
 
     return 0;
 }
