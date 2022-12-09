@@ -21,6 +21,13 @@ struct base
     char full_name_advocate[LA_NAME];
 };
 
+//queue with all records
+struct base_queue
+{
+    base *data;
+    base_queue *next;
+};
+
 //queue with search results
 struct search_res_queue
 {
@@ -181,8 +188,12 @@ node *create_tree()
     return root;
 }
 
-void read_base() //to RAM
+base_queue *read_base() //to RAM
 {
+    base_queue *head, *p, *tail;
+    head = tail = nullptr;
+    int i = 0;
+
     ifstream in;
     in.open("testBase3.dat", ios::binary);
     if (!in)
@@ -192,25 +203,30 @@ void read_base() //to RAM
     }
     else cout << "The file is open\n";
 
-    ///+
-
-    int i = 0;
-    //n = 0;
-
     while(i < MAX)
     {
-        arr[index[i]] = new base;
-        in.read((char*)arr[index[i]], sizeof(base));
-        if (in.eof()) break;
-        n++;
+        p = new base_queue;
+        p -> data = new base;
+        in.read((char*)p -> data, sizeof(base));
+
+        //cout << "p = " << p << endl;
+        p -> next = nullptr;
+        if (head != nullptr) tail -> next = p;
+        else head = p;
+        tail = p;
+        i++;
+        //cout << "i = " << i << endl;
     }
 
-    cout << "Reading " << n << " records\n";
+    in.close();
+
+    cout << "Read " << i << " records\n";
+    return(head);
 }
 
-void display() //20 records
+void display(base **arr) //20 records
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < MAX; i++)
     {
         int k = 0;
         char ch = 'y';
@@ -219,7 +235,7 @@ void display() //20 records
         {
             for (int i = 20*k; i < 20*(k + 1); i++)
             {
-            cout << i + 1 << ")" << endl; //print the number of record
+            cout << index[i] + 1 << ")" << endl; //print the number of record
             cout << arr[index[i]] -> full_name_depositor << endl;
             cout << arr[index[i]] -> deposit_sum << endl;
             cout << arr[index[i]] -> deposit_date << endl;
@@ -488,18 +504,31 @@ void sum_search(unsigned short key) //search by deposit sum and add records to t
 
 int main()
 {
+    base_queue *head, *p;
+
+    head = read_base();
+
     for (int i = 0; i < MAX; i++) index[i] = i;
-    read_base();
-    //display();
+
+    int i = 0;
+    for(p = head; p -> next != nullptr; p = p -> next)
+    {
+        arr[index[i++]] = p -> data;
+        /*cout << "i = " << i << endl;
+        cout << "index[i] = " << index[i] << endl;
+        cout << "p = " << p << endl;*/
+    }
+
+    display(arr);
 
 
-    heapsort(MAX);
+    /*heapsort(MAX);
     final_sorting();
 
     sum_search(5000);
     //display_queue();
     node *root = create_tree();
-    cout << "root: " << root << endl << endl;
+    cout << "root: " << root << endl << endl;*/
 
     return 0;
 }
