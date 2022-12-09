@@ -21,13 +21,6 @@ struct base
     char full_name_advocate[LA_NAME];
 };
 
-//queue with all records
-struct base_queue
-{
-    base *data;
-    base_queue *next;
-};
-
 //queue with search results
 struct search_res_queue
 {
@@ -188,10 +181,8 @@ node *create_tree()
     return root;
 }
 
-base_queue *read_base() //to RAM
+void read_base() //to RAM
 {
-    base_queue *head, *p, *tail;
-    head = tail = nullptr;
     int i = 0;
 
     ifstream in;
@@ -203,28 +194,21 @@ base_queue *read_base() //to RAM
     }
     else cout << "The file is open\n";
 
-    while(i < MAX)
+    while(n < MAX)
     {
-        p = new base_queue;
-        p -> data = new base;
-        in.read((char*)p -> data, sizeof(base));
-
-        //cout << "p = " << p << endl;
-        p -> next = nullptr;
-        if (head != nullptr) tail -> next = p;
-        else head = p;
-        tail = p;
+        arr[i] = new base;
+        in.read((char*)arr[i], sizeof(base));
+        if (in.eof()) break;
         i++;
-        //cout << "i = " << i << endl;
     }
 
     in.close();
+    n = i;
 
     cout << "Read " << i << " records\n";
-    return(head);
 }
 
-void display(base **arr) //20 records
+void display() //20 records
 {
     for (int i = 0; i < MAX; i++)
     {
@@ -504,23 +488,10 @@ void sum_search(unsigned short key) //search by deposit sum and add records to t
 
 int main()
 {
-    base_queue *head, *p;
-
-    head = read_base();
-
     for (int i = 0; i < MAX; i++) index[i] = i;
 
-    int i = 0;
-    for(p = head; p -> next != nullptr; p = p -> next)
-    {
-        arr[index[i++]] = p -> data;
-        /*cout << "i = " << i << endl;
-        cout << "index[i] = " << index[i] << endl;
-        cout << "p = " << p << endl;*/
-    }
-
-    display(arr);
-
+    read_base();
+    display();
 
     /*heapsort(MAX);
     final_sorting();
