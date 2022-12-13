@@ -114,6 +114,7 @@ node *add_to_tree(base *D, node *p)
     return p;
 }
 
+int index[MAX]; ///+
 base *arr[MAX]; //array of pointers
 int n; //current number of records
 
@@ -191,12 +192,15 @@ void read_base() //to RAM
     }
     else cout << "The file is open\n";
 
-    n = 0;
+    ///+
 
-    while(n < MAX)
+    int i = 0;
+    //n = 0;
+
+    while(i < MAX)
     {
-        arr[n] = new base;
-        in.read((char*)arr[n], sizeof(base));
+        arr[index[i]] = new base;
+        in.read((char*)arr[index[i]], sizeof(base));
         if (in.eof()) break;
         n++;
     }
@@ -216,10 +220,10 @@ void display() //20 records
             for (int i = 20*k; i < 20*(k + 1); i++)
             {
             cout << i + 1 << ")" << endl; //print the number of record
-            cout << arr[i] -> full_name_depositor << endl;
-            cout << arr[i] -> deposit_sum << endl;
-            cout << arr[i] -> deposit_date << endl;
-            cout << arr[i] -> full_name_advocate << endl << endl;
+            cout << arr[index[i]] -> full_name_depositor << endl;
+            cout << arr[index[i]] -> deposit_sum << endl;
+            cout << arr[index[i]] -> deposit_date << endl;
+            cout << arr[index[i]] -> full_name_advocate << endl << endl;
             }
 
             cout << "Do you want to output the following 20 database records? (y/n) ";
@@ -484,8 +488,10 @@ void sum_search(unsigned short key) //search by deposit sum and add records to t
 
 int main()
 {
+    for (int i = 0; i < MAX; i++) index[i] = i;
     read_base();
     //display();
+
 
     heapsort(MAX);
     final_sorting();
