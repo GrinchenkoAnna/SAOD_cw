@@ -48,47 +48,6 @@ search_res_queue *qhead;
 search_res_queue *qtail;
 int qn;
 
-int queue_is_empty() {return qhead == nullptr ? 1 : 0;} //is queue empty?
-
-void set_next_item(search_res_queue *next) //set the next queue item
-{
-    if (queue_is_empty()) qhead = next;
-    else qtail -> next = next;
-
-    qtail = next;
-    qtail -> next = nullptr;
-}
-
-void add_to_queue(int index) //add record to the queue
-{
-    search_res_queue *p = new search_res_queue;
-    p -> index = index;
-    set_next_item(p);
-    qn++;
-}
-
-void delete_queue() //make the queue empty
-{
-    qhead = qtail = nullptr;
-    qn = 0;
-}
-
-void display_queue() //print the queue (all records)
-{
-    search_res_queue *p = qhead;
-
-    while(p)
-    {
-        cout << setw(6) << p -> index;
-        cout << setw(30) << arr[p -> index] -> full_name_depositor;
-        cout << setw(10) << arr[p -> index] -> deposit_sum;
-        cout << setw(10) << arr[p -> index] -> deposit_date;
-        cout << setw(23) << arr[p -> index] -> full_name_advocate << endl;
-
-        p = p -> next;
-    }
-}
-
 void read_base() //to RAM
 {
     int i = 0;
@@ -377,12 +336,12 @@ void heapsort(int first, int last) //sort by deposit date
 void final_sorting() //sort by deposit sum & deposit date
 {
     int a = 0, b, temp;
-    while (a < MAX - 2)
+    while (a < MAX - 1)
     {
         temp = a;
         //cout << "temp = " << temp << endl;;
 
-        while (arr[index[a]] -> deposit_sum == arr[index[a + 1]] -> deposit_sum && a < MAX - 2) a++;
+        while (arr[index[a]] -> deposit_sum == arr[index[a + 1]] -> deposit_sum && a < MAX - 1) a++;
 
         b = a;
         a = temp;
@@ -395,7 +354,48 @@ void final_sorting() //sort by deposit sum & deposit date
     }
 }
 
-void sum_search(unsigned short key) //search by deposit sum and add records to the queue
+int queue_is_empty() {return qhead == nullptr ? 1 : 0;} //is queue empty?
+
+void set_next_item(search_res_queue *next) //set the next queue item
+{
+    if (queue_is_empty()) qhead = next;
+    else qtail -> next = next;
+
+    qtail = next;
+    qtail -> next = nullptr;
+}
+
+void add_to_queue(int index) //add record to the queue
+{
+    search_res_queue *p = new search_res_queue;
+    p -> index = index;
+    set_next_item(p);
+    qn++;
+}
+
+void delete_queue() //make the queue empty
+{
+    qhead = qtail = nullptr;
+    qn = 0;
+}
+
+void display_queue() //print the queue (all records)
+{
+    search_res_queue *p = qhead;
+
+    while(p)
+    {
+        cout << setw(6) << p -> index << ")";
+        cout << setw(30) << arr[p -> index] -> full_name_depositor;
+        cout << setw(10) << arr[p -> index] -> deposit_sum;
+        cout << setw(10) << arr[p -> index] -> deposit_date;
+        cout << setw(23) << arr[p -> index] -> full_name_advocate << endl;
+
+        p = p -> next;
+    }
+}
+
+void search_to_queue(unsigned short key) //search by deposit sum and add records to the queue
 {
     cout << "Key = " << key << endl;
     int L = 0, R = MAX - 1, m, a = -1, b;
@@ -419,7 +419,7 @@ void sum_search(unsigned short key) //search by deposit sum and add records to t
     if(a >= 0)
     {
         int i = a, c = 0;
-        while ((arr[index[i]] -> deposit_sum) == key && i < MAX)
+        while ((arr[index[i]] -> deposit_sum) == key && i < MAX + 1)
         {
             add_to_queue(index[i]);
             i++;
@@ -442,7 +442,7 @@ void delete_tree(tree *p)
     p = nullptr;
 }
 
-void create_tree(int i, base **element, tree **p, int *index)
+void create_tree(int i, tree **p)
 {
     bool VR = true, HR = true;
     tree *q;
@@ -460,7 +460,7 @@ void create_tree(int i, base **element, tree **p, int *index)
     {
         if(strcmp(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) <= 0)
         {
-            create_tree(i, arr, &(*p) -> left, index);
+            create_tree(i, &(*p) -> left);
             if(VR)
             {
                 if((*p) -> balance == 0)
@@ -486,7 +486,7 @@ void create_tree(int i, base **element, tree **p, int *index)
         {
             if(strcmp(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) > 0)
             {
-                create_tree(i, arr, &(*p) -> right, index);
+                create_tree(i, &(*p) -> right);
                 if(VR)
                 {
                     (*p) -> balance = 1;
@@ -516,17 +516,17 @@ void create_tree(int i, base **element, tree **p, int *index)
     }
 }
 
-void display_tree(base **arr, tree *p, int *index)
+void display_tree(tree *p)
 {
     if(p)
     {
-        display_tree(arr, p -> left, index);
+        display_tree(p -> left);
         cout << setw(5) << p -> index << ")"; //print the number of record
         cout << setw(31) << arr[p -> index] -> full_name_depositor;
         cout << setw(10) << arr[p -> index] -> deposit_sum;
         cout << setw(10) << arr[p -> index] -> deposit_date;
         cout << setw(23) << arr[p -> index] -> full_name_advocate << endl;
-        display_tree(arr, p -> right, index);
+        display_tree(p -> right);
     }
 }
 
@@ -540,22 +540,23 @@ int main()
     final_sorting();
     //display();
 
+    cout << setw(40) << "---QUEUE---" << endl;
     delete_queue();
-    sum_search(35000);
+    search_to_queue(5000);
     //display_queue();
+    cout << endl;
 
+    cout << setw(40) << "---TREE---" << endl;
     delete_tree(btree);
     btree = nullptr;
     res = qhead;
     while (res)
     {
-        create_tree(res -> index, arr, &btree, index);
+        create_tree(res -> index, &btree);
         res = res -> next;
     }
 
-    tree *t;
-    t = btree;
-    display_tree(arr, t, index);
+    display_tree(btree);
 
     return 0;
 }
