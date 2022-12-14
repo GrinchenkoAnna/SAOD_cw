@@ -3,6 +3,8 @@
 #include <fstream>
 #include <math.h>
 #include <string.h> ///for create_tree, temporarily
+//#include <locale.h>
+#include <windows.h>
 
 using namespace std;
 
@@ -530,8 +532,38 @@ void display_tree(tree *p)
     }
 }
 
+tree *search_in_tree(tree *p)
+{
+    char key[LA_NAME];
+    int flag = 0;
+    cout << "Enter advocate's name. Example: Архипов П В" << endl;
+    cin.getline(key, LA_NAME, '\n');
+    while(p)
+    {
+        if(strcmp(key, arr[p -> index] -> full_name_advocate) < 0) p = p -> left;
+        else if (strcmp(key, arr[p -> index] -> full_name_advocate) > 0) p = p -> right;
+        else
+        {
+            cout << "Found the person" << endl;
+            flag++;
+            return p;
+            break;
+        }
+    }
+    cout << "flag = " << flag << endl;
+    if(flag == 0)
+    {
+        cout << "There is no such name in the database" << endl;
+        return nullptr;
+    }
+}
+
 int main()
 {
+    //setlocale(0,"");
+    SetConsoleCP(1251);			// установка кодовой страницы в поток ввода
+    SetConsoleOutputCP(1251);
+
     for (int i = 0; i < MAX; i++) index[i] = i;
 
     read_base();
@@ -542,7 +574,7 @@ int main()
 
     cout << setw(40) << "---QUEUE---" << endl;
     delete_queue();
-    search_to_queue(5000);
+    search_to_queue(15000);
     //display_queue();
     cout << endl;
 
@@ -557,6 +589,10 @@ int main()
     }
 
     display_tree(btree);
+
+    tree *adv_search;
+    adv_search = search_in_tree(btree);
+
 
     return 0;
 }
