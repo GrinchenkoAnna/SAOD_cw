@@ -3,7 +3,7 @@
 #include <fstream>
 #include <math.h>
 #include <string.h> ///for create_tree, temporarily
-//#include <locale.h>
+//#include <clocale>
 #include <windows.h>
 
 using namespace std;
@@ -13,8 +13,6 @@ const unsigned int LD_NAME = 30;
 const unsigned int L_DATE = 10;
 const unsigned int LA_NAME = 22;
 const unsigned int MAX = 4000;
-
-const unsigned int M = 2;
 
 //records from the file
 struct base
@@ -230,7 +228,7 @@ int comparision(char* str1, char* str2)
     arr2[4] = str2[0];
     arr2[5] = str2[1];
 
-    //cout << "Comparision OK" << endl;
+    //cout << atoi(arr1) - atoi(arr2) << endl;
     return atoi(arr1) - atoi(arr2);
 }
 
@@ -444,6 +442,26 @@ void delete_tree(tree *p)
     p = nullptr;
 }
 
+int name_comparision(char* str1, char* str2)
+{
+    for (int i = 0; str1[i] != '\0'; i++)
+    {
+        if(str1[i] > str2[i])
+        {
+            //cout << str1[i] << ">" << str2[i] << endl;
+            return 1;
+        }
+
+        if(str1[i] < str2[i])
+        {
+            //cout << str1[i] << "<" << str2[i] << endl;
+            return -1;
+        }
+        //cout << str1[i] << "==" << str2[i] << endl;
+    }
+    return 0;
+}
+
 void create_tree(int i, tree **p)
 {
     bool VR = true, HR = true;
@@ -460,7 +478,7 @@ void create_tree(int i, tree **p)
 
     else
     {
-        if(strcmp(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) <= 0)
+        if(name_comparision(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) <= 0)
         {
             create_tree(i, &(*p) -> left);
             if(VR)
@@ -486,7 +504,7 @@ void create_tree(int i, tree **p)
         }
         else
         {
-            if(strcmp(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) > 0)
+            if(name_comparision(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) > 0)
             {
                 create_tree(i, &(*p) -> right);
                 if(VR)
@@ -532,16 +550,26 @@ void display_tree(tree *p)
     }
 }
 
-tree *search_in_tree(tree *p)
+tree *search_in_tree(char key[LA_NAME], tree *p)
 {
-    char key[LA_NAME];
     int flag = 0;
-    cout << "Enter advocate's name. Example: РђСЂС…РёРїРѕРІ Рџ Р’" << endl;
-    cin.getline(key, LA_NAME, '\n');
+
     while(p)
     {
-        if(strcmp(key, arr[p -> index] -> full_name_advocate) < 0) p = p -> left;
-        else if (strcmp(key, arr[p -> index] -> full_name_advocate) > 0) p = p -> right;
+        if(name_comparision(key, arr[p -> index] -> full_name_advocate) < 0)
+        {
+            //cout << arr[p -> index] -> full_name_advocate << endl;
+            //cout << "<" << endl;
+            p = p -> left;
+        }
+
+        if(name_comparision(key, arr[p -> index] -> full_name_advocate) > 0)
+        {
+            //cout << arr[p -> index] -> full_name_advocate << endl;
+            //cout << ">" << endl;
+            p = p -> right;
+        }
+
         else
         {
             cout << "Found the person" << endl;
@@ -550,7 +578,7 @@ tree *search_in_tree(tree *p)
             break;
         }
     }
-    cout << "flag = " << flag << endl;
+
     if(flag == 0)
     {
         cout << "There is no such name in the database" << endl;
@@ -558,11 +586,28 @@ tree *search_in_tree(tree *p)
     }
 }
 
+void display_tree_search(char key[LA_NAME], tree *p)
+{
+    if(p)
+    {
+        display_tree_search(key, p -> left);
+        if(name_comparision(key, arr[p -> index] -> full_name_advocate) == 0)
+        {
+            cout << setw(5) << p -> index << ")"; //print the number of record
+            cout << setw(31) << arr[p -> index] -> full_name_depositor;
+            cout << setw(10) << arr[p -> index] -> deposit_sum;
+            cout << setw(10) << arr[p -> index] -> deposit_date;
+            cout << setw(23) << arr[p -> index] -> full_name_advocate << endl;
+        }
+        display_tree_search(key, p -> right);
+    }
+}
+
 int main()
 {
-    //setlocale(0,"");
-    SetConsoleCP(1251);			// СѓСЃС‚Р°РЅРѕРІРєР° РєРѕРґРѕРІРѕР№ СЃС‚СЂР°РЅРёС†С‹ РІ РїРѕС‚РѕРє РІРІРѕРґР°
-    SetConsoleOutputCP(1251);
+    //setlocale(LC_ALL, "Russian_Russia.1251");
+    //SetConsoleCP(1200);			// установка кодовой страницы в поток ввода
+    //SetConsoleOutputCP(1200);
 
     for (int i = 0; i < MAX; i++) index[i] = i;
 
@@ -587,12 +632,15 @@ int main()
         create_tree(res -> index, &btree);
         res = res -> next;
     }
-
     display_tree(btree);
 
-    tree *adv_search;
-    adv_search = search_in_tree(btree);
-
+    cout << setw(40) << "---SEARCH---" << endl;
+    char key[LA_NAME];
+    cout << "Enter advocate's name: Surname Name(the first letter) Middle name(the first letter)" << endl;
+    cin.getline(key, LA_NAME);
+    tree *date_search;
+    date_search = search_in_tree(key, btree);
+    display_tree_search(key, date_search);
 
     return 0;
 }
