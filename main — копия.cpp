@@ -2,8 +2,7 @@
 #include <iomanip>
 #include <fstream>
 #include <math.h>
-#include <string.h> ///for create_tree, temporarily
-//#include <clocale>
+#include <string.h> ///del
 #include <windows.h>
 
 using namespace std;
@@ -61,7 +60,7 @@ void read_base() //to RAM
     }
     else cout << "The file is open\n";
 
-    while(n < MAX)
+    while(i < MAX)
     {
         arr[i] = new base;
         in.read((char*)arr[i], sizeof(base));
