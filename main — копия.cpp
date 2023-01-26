@@ -2,7 +2,6 @@
 #include <iomanip>
 #include <fstream>
 #include <math.h>
-#include <string.h> ///del
 #include <windows.h>
 
 using namespace std;
@@ -604,22 +603,18 @@ void display_tree_search(char key[LA_NAME], tree *p)
 
 int main()
 {
-    //setlocale(LC_ALL, "Russian_Russia.1251");
-    //SetConsoleCP(1200);			// установка кодовой страницы в поток ввода
-    //SetConsoleOutputCP(1200);
-
     for (int i = 0; i < MAX; i++) index[i] = i;
 
     read_base();
-    //display();
+    display();
     heapsort(MAX);
     final_sorting();
-    //display();
+    display();
 
     cout << setw(40) << "---QUEUE---" << endl;
     delete_queue();
     search_to_queue(15000);
-    //display_queue();
+    display_queue();
     cout << endl;
 
     cout << setw(40) << "---TREE---" << endl;
@@ -635,7 +630,8 @@ int main()
 
     cout << setw(40) << "---SEARCH---" << endl;
     char key[LA_NAME];
-    cout << "Enter advocate's name: Surname Name(the first letter) Middle name(the first letter)" << endl;
+    cout << "Enter advocate's name: " << endl;
+    cin >> ws;
     cin.getline(key, LA_NAME);
     tree *date_search;
     date_search = search_in_tree(key, btree);
