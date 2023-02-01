@@ -6,11 +6,12 @@
 
 using namespace std;
 
-
 const unsigned int LD_NAME = 30;
 const unsigned int L_DATE = 10;
 const unsigned int LA_NAME = 22;
 const unsigned int MAX = 4000;
+
+bool wrong_key = false;
 
 //records from the file
 struct base
@@ -132,36 +133,20 @@ void heapsort(int number) //sort by deposit sum
 
             if ((x -> deposit_sum) <= (arr[index[j]] -> deposit_sum)) break;
 
-            //arr[i] = arr[j];
             index[i] = index[j];
             i = j;
         }
-        //arr[i] = x;
         index[i] = t;
 
         L = L - 1;
     }
 
-    /*for (int k = 0; k < 4000; k++)
-    {
-        cout << k + 1 << ") "; //print the number of record
-        //cout << arr[index[k]] -> full_name_depositor << endl;
-        cout << arr[index[k]] -> deposit_sum << " ";
-        //cout << arr[index[k]] -> deposit_date << endl;
-        //cout << arr[index[k]] -> full_name_advocate << endl << endl;
-        cout << index[k] << endl << endl;
-    }*/
-
     int R = number - 1;
-    //base* temp = nullptr;
     int temp;
     int t;
 
     while (R >= 1)
     {
-        /*temp = arr[0];
-        arr[0] = arr[R];
-        arr[R] = temp;*/
         temp = index[0];
         index[0] = index[R];
         t = index[R];
@@ -186,25 +171,12 @@ void heapsort(int number) //sort by deposit sum
 
             if ((x -> deposit_sum) <= (arr[index[j]] -> deposit_sum)) break;
 
-            //arr[i] = arr[j];
             index[i] = index[j];
             i = j;
-            //cout << "------ i = " << i << endl;
         }
-        //arr[i] = x;
         index[i] = t;
 
     }
-
-    /*for (int k = 0; k < 4000; k++)
-    {
-        cout << k + 1 << ") "; //print the number of record
-        cout << arr[index[k]] -> full_name_depositor << endl;
-        cout << arr[index[k]] -> deposit_sum << endl;
-        cout << arr[index[k]] -> deposit_date << endl;
-        cout << arr[index[k]] -> full_name_advocate << endl ;
-        cout << index[k] << endl << endl;
-    }*/
 }
 
 int comparision(char* str1, char* str2)
@@ -226,23 +198,20 @@ int comparision(char* str1, char* str2)
     arr2[4] = str2[0];
     arr2[5] = str2[1];
 
-    //cout << atoi(arr1) - atoi(arr2) << endl;
     return atoi(arr1) - atoi(arr2);
 }
 
 void heapsort(int first, int last) //sort by deposit date
 {
-    //cout << "First = " << first << ", last = " << last << endl;
     int compare1, compare2;
     int L = first + (last - first)/2;
-    //cout << "First L = " << L << endl;
+
     while (L >= first)
     {
         // building (L, n) pyramid
         base* x = arr[index[L]];
         int t = index[L];
         int i = L - first;
-        //cout << "L = " << L << endl;
 
         while (true)
         {
@@ -250,7 +219,6 @@ void heapsort(int first, int last) //sort by deposit date
 
             if (i == 0) j = 1;
             else j = 2*i;
-            //cout << "i1 = " << i << " j1 = " << j << endl;
 
             if (j + first > last) break;
 
@@ -260,35 +228,26 @@ void heapsort(int first, int last) //sort by deposit date
             compare2 = comparision(x -> deposit_date, arr[index[j + first]] -> deposit_date);
             if ( compare2 <= 0) break;
 
-            //arr[i + first] = arr[j + first];
             index[i + first] = index[j + first];
             i = j;
         }
-        //arr[i + first] = x;
         index[i + first] = t;
 
         L = L - 1;
     }
 
     int R = last;
-    //cout << "First R = " << R << endl;
-
-    //base* temp = nullptr;
     int temp;
     int t;
 
     while (R >= first + 1)
     {
-        /*temp = arr[first];
-        arr[first] = arr[R];
-        arr[R] = temp;*/
         temp = index[first];
         index[first] = index[R];
         t = index[R];
         index[R] = temp;
 
         R = R - 1;
-        //cout << "R = " << R << endl;
 
         // building (1, R) pyramid
         int i = 0;
@@ -301,7 +260,6 @@ void heapsort(int first, int last) //sort by deposit date
 
             if (i == 0) j = 1;
             else j = 2*i;
-            //cout << "i2 = " << i << " j2 = " << j << endl;
 
             if (j + first > R) break;
 
@@ -311,24 +269,11 @@ void heapsort(int first, int last) //sort by deposit date
             compare2 = comparision(x -> deposit_date, arr[index[j + first]] -> deposit_date);
             if (compare2 <= 0) break;
 
-            //arr[i + first] = arr[j + first];
             index[i + first] = index[j + first];
             i = j;
         }
-        //arr[i + first] = x;
         index[i + first] = t;
     }
-    //cout << "Heapsort OK" << endl;
-
-    /*for (int k = first; k <= last; k++)
-    {
-        cout << setw(5) << k + 1 << ") "; //print the number of record
-        //cout << arr[index[k]] -> full_name_depositor << endl;
-        cout << setw(7) << arr[index[k]] -> deposit_sum << " ";
-        cout << setw(7) << arr[index[k]] -> deposit_date << " ";
-        //cout << arr[index[k]] -> full_name_advocate << endl ;
-        cout << setw(5) << index[k] << endl;
-    }*/
 }
 
 void final_sorting() //sort by deposit sum & deposit date
@@ -337,14 +282,11 @@ void final_sorting() //sort by deposit sum & deposit date
     while (a < MAX - 1)
     {
         temp = a;
-        //cout << "temp = " << temp << endl;;
 
         while (arr[index[a]] -> deposit_sum == arr[index[a + 1]] -> deposit_sum && a < MAX - 1) a++;
 
         b = a;
         a = temp;
-
-        //cout << "a = " << a << " b = " << b << endl;
 
         heapsort(a, b);
 
@@ -423,10 +365,14 @@ void search_to_queue(unsigned short key) //search by deposit sum and add records
             i++;
             c++;
         }
-        //b = i - 1;
         cout << "Records: " << c << endl;
     }
-    else cout << "The element with a key = " << key << " does not exist" << endl << endl;
+    else
+    {
+        wrong_key = true;
+        cout << "The element with a key = " << key << " does not exist" << endl << endl;
+    }
+
 }
 
 void delete_tree(tree *p)
@@ -446,16 +392,13 @@ int name_comparision(char* str1, char* str2)
     {
         if(str1[i] > str2[i])
         {
-            //cout << str1[i] << ">" << str2[i] << endl;
             return 1;
         }
 
         if(str1[i] < str2[i])
         {
-            //cout << str1[i] << "<" << str2[i] << endl;
             return -1;
         }
-        //cout << str1[i] << "==" << str2[i] << endl;
     }
     return 0;
 }
@@ -556,15 +499,11 @@ tree *search_in_tree(char key[LA_NAME], tree *p)
     {
         if(name_comparision(key, arr[p -> index] -> full_name_advocate) < 0)
         {
-            //cout << arr[p -> index] -> full_name_advocate << endl;
-            //cout << "<" << endl;
             p = p -> left;
         }
 
         if(name_comparision(key, arr[p -> index] -> full_name_advocate) > 0)
         {
-            //cout << arr[p -> index] -> full_name_advocate << endl;
-            //cout << ">" << endl;
             p = p -> right;
         }
 
@@ -606,16 +545,23 @@ int main()
     for (int i = 0; i < MAX; i++) index[i] = i;
 
     read_base();
+    cout << setw(40) << "---UNSORTED BASE--" << endl;
     display();
     heapsort(MAX);
     final_sorting();
+    cout << setw(40) << "---SORTED BASE--" << endl;
     display();
 
     cout << setw(40) << "---QUEUE---" << endl;
     delete_queue();
-    search_to_queue(15000);
+    int sum = 0;
+    cout << "Enter the sum: " << endl;
+    cin >> ws;
+    cin >> sum;
+    search_to_queue(sum);
     display_queue();
     cout << endl;
+    if (wrong_key == true) exit(0);
 
     cout << setw(40) << "---TREE---" << endl;
     delete_tree(btree);
