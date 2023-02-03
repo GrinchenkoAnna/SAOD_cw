@@ -493,8 +493,6 @@ void display_tree(tree *p)
 
 tree *search_in_tree(char key[LA_NAME], tree *p)
 {
-    int flag = 0;
-
     while(p)
     {
         if(name_comparision(key, arr[p -> index] -> full_name_advocate) < 0)
@@ -509,17 +507,9 @@ tree *search_in_tree(char key[LA_NAME], tree *p)
 
         else
         {
-            cout << "Found the person" << endl;
-            flag++;
             return p;
             break;
         }
-    }
-
-    if(flag == 0)
-    {
-        cout << "There is no such name in the database" << endl;
-        return nullptr;
     }
 }
 
