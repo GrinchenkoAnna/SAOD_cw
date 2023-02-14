@@ -110,13 +110,51 @@ void display() //20 records
     }
 }
 
+bool comparision(char* str2, char* str1)
+{
+    char arr1[7];
+    char arr2[7];
+    int result_int;
+
+    arr1[0] = str1[6];
+    arr1[1] = str1[7];
+    arr1[2] = str1[3];
+    arr1[3] = str1[4];
+    arr1[4] = str1[0];
+    arr1[5] = str1[1];
+
+    arr2[0] = str2[6];
+    arr2[1] = str2[7];
+    arr2[2] = str2[3];
+    arr2[3] = str2[4];
+    arr2[4] = str2[0];
+    arr2[5] = str2[1];
+
+    result_int = atoi(arr2) - atoi(arr1);
+    if (result_int <= 0) return true;
+    else return false;
+}
+
+bool less_than(int b, int a)
+{
+    if ((arr[b] -> deposit_sum) <
+        (arr[a] -> deposit_sum)) { return true; }
+
+    else if ((arr[b] -> deposit_sum) >
+             (arr[a] -> deposit_sum)) { return false; }
+
+    else
+    {
+        return comparision(arr[b] -> deposit_date, arr[a] -> deposit_date);
+    }
+}
+
 void heapsort(int number) //sort by deposit sum
 {
     int L = (number - 1)/2;
     while (L >= 0)
     {
         // building (L, n) pyramid
-        base* x = arr[index[L]];
         int t = index[L];
         int i = L;
 
@@ -129,9 +167,9 @@ void heapsort(int number) //sort by deposit sum
 
             if (j > number - 1) break;
 
-            if ((j < number - 1) && ((arr[index[j + 1]] -> deposit_sum) <= (arr[index[j]] -> deposit_sum))) j = j + 1;
+            if ((j < number - 1) && less_than(index[j + 1], index[j])) { j = j + 1; }
 
-            if ((x -> deposit_sum) <= (arr[index[j]] -> deposit_sum)) break;
+            if (less_than(t, index[j])) { break; }
 
             index[i] = index[j];
             i = j;
@@ -155,7 +193,6 @@ void heapsort(int number) //sort by deposit sum
         R = R - 1;
 
         // building (1, R) pyramid
-        base* x = arr[t];
         int i = 0;
 
         while (true)
@@ -167,130 +204,14 @@ void heapsort(int number) //sort by deposit sum
 
             if (j > R) break;
 
-            if ((j < R) && ((arr[index[j + 1]] -> deposit_sum) <= (arr[index[j]] -> deposit_sum))) j = j + 1;
+            if ((j < R) && less_than(index[j + 1], index[j])) { j = j + 1; }
 
-            if ((x -> deposit_sum) <= (arr[index[j]] -> deposit_sum)) break;
+            if (less_than(t, index[j])) { break; }
 
             index[i] = index[j];
             i = j;
         }
         index[i] = t;
-
-    }
-}
-
-int comparision(char* str1, char* str2)
-{
-    char arr1[7];
-    char arr2[7];
-
-    arr1[0] = str1[6];
-    arr1[1] = str1[7];
-    arr1[2] = str1[3];
-    arr1[3] = str1[4];
-    arr1[4] = str1[0];
-    arr1[5] = str1[1];
-
-    arr2[0] = str2[6];
-    arr2[1] = str2[7];
-    arr2[2] = str2[3];
-    arr2[3] = str2[4];
-    arr2[4] = str2[0];
-    arr2[5] = str2[1];
-
-    return atoi(arr1) - atoi(arr2);
-}
-
-void heapsort(int first, int last) //sort by deposit date
-{
-    int compare1, compare2;
-    int L = first + (last - first)/2;
-
-    while (L >= first)
-    {
-        // building (L, n) pyramid
-        base* x = arr[index[L]];
-        int t = index[L];
-        int i = L - first;
-
-        while (true)
-        {
-            int j;
-
-            if (i == 0) j = 1;
-            else j = 2*i;
-
-            if (j + first > last) break;
-
-            compare1 = comparision(arr[index[j + 1 + first]] -> deposit_date,  arr[index[j + first]] -> deposit_date);
-            if ((j + first < last) && (compare1 <= 0)) j = j + 1;
-
-            compare2 = comparision(x -> deposit_date, arr[index[j + first]] -> deposit_date);
-            if ( compare2 <= 0) break;
-
-            index[i + first] = index[j + first];
-            i = j;
-        }
-        index[i + first] = t;
-
-        L = L - 1;
-    }
-
-    int R = last;
-    int temp;
-    int t;
-
-    while (R >= first + 1)
-    {
-        temp = index[first];
-        index[first] = index[R];
-        t = index[R];
-        index[R] = temp;
-
-        R = R - 1;
-
-        // building (1, R) pyramid
-        int i = 0;
-        base* x = arr[t];
-
-        while (true)
-        {
-            int j;
-            int compare1, compare2;
-
-            if (i == 0) j = 1;
-            else j = 2*i;
-
-            if (j + first > R) break;
-
-            compare1 = comparision(arr[index[j + 1 + first]] -> deposit_date,  arr[index[j + first]] -> deposit_date);
-            if ((j + first < R) && (compare1 <= 0)) j = j + 1;
-
-            compare2 = comparision(x -> deposit_date, arr[index[j + first]] -> deposit_date);
-            if (compare2 <= 0) break;
-
-            index[i + first] = index[j + first];
-            i = j;
-        }
-        index[i + first] = t;
-    }
-}
-
-void final_sorting() //sort by deposit sum & deposit date
-{
-    int a = 0, b, temp;
-    while (a < MAX - 1)
-    {
-        temp = a;
-
-        while (arr[index[a]] -> deposit_sum == arr[index[a + 1]] -> deposit_sum && a < MAX - 1) a++;
-
-        b = a;
-        a = temp;
-
-        heapsort(a, b);
-
-        a = b + 1;
     }
 }
 
@@ -538,7 +459,6 @@ int main()
     cout << setw(40) << "---UNSORTED BASE--" << endl;
     display();
     heapsort(MAX);
-    final_sorting();
     cout << setw(40) << "---SORTED BASE--" << endl;
     display();
 
