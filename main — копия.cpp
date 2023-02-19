@@ -35,6 +35,7 @@ struct tree
     int index;
     tree *left;
     tree *right;
+    tree *same;
     int balance;
 } *btree;
 
@@ -311,20 +312,13 @@ int name_comparision(char* str1, char* str2)
 {
     for (int i = 0; str1[i] != '\0'; i++)
     {
-        if(str1[i] > str2[i])
-        {
-            return 1;
-        }
-
-        if(str1[i] < str2[i])
-        {
-            return -1;
-        }
+        if(str1[i] > str2[i]) { return 1; }
+        if(str1[i] < str2[i]) { return -1; }
     }
     return 0;
 }
 
-void create_tree(int i, tree **p)
+/*void create_tree(int i, tree **p)
 {
     bool VR = true, HR = true;
     tree *q;
@@ -396,6 +390,86 @@ void create_tree(int i, tree **p)
             }
         }
     }
+}*/
+
+void create_tree(int i, tree **p)
+{
+    bool VR = true, HR = true;
+    tree *q;
+
+    if((*p) == nullptr)
+    {
+        *p = new tree;
+        (*p) -> index = i;
+        (*p) -> left = (*p) -> right = (*p) -> same = nullptr;
+        (*p) -> balance = 0;
+        VR = true;
+    }
+
+    else
+    {
+        if(name_comparision(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) < 0)
+        {
+            create_tree(i, &(*p) -> left);
+            if(VR)
+            {
+                if((*p) -> balance == 0)
+                {
+                    q = (*p) -> left;
+                    (*p) -> left = q -> right;
+                    q -> right = (*p);
+                    (*p) = q;
+                    q -> balance = 1;
+                    VR = false;
+                    HR = true;
+                }
+                else
+                {
+                    (*p) -> balance = 0;
+                    VR = true;
+                    HR = false;
+                }
+            }
+            else HR = false;
+        }
+        else
+        {
+            if(name_comparision(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) > 0)
+            {
+                create_tree(i, &(*p) -> right);
+                if(VR)
+                {
+                    (*p) -> balance = 1;
+                    VR = false;
+                    HR = true;
+                }
+                else
+                {
+                    if(HR)
+                    {
+                        if((*p) -> balance > 0)
+                        {
+                            q = (*p) -> right;
+                            (*p) -> right = q -> left;
+                            (*p) -> balance = 0;
+                            q -> balance = 0;
+                            q -> left = (*p);
+                            (*p) = q;
+                            VR = true;
+                            HR = false;
+                        }
+                        else HR = false;
+                    }
+                }
+            }
+
+            if(name_comparision(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) == 0)
+            {
+                create_tree(i, &(*p) -> same);
+                //VR = false;
+            }
+        }
+    }
 }
 
 void display_tree(tree *p)
@@ -408,6 +482,7 @@ void display_tree(tree *p)
         cout << setw(10) << arr[p -> index] -> deposit_sum;
         cout << setw(10) << arr[p -> index] -> deposit_date;
         cout << setw(23) << arr[p -> index] -> full_name_advocate << endl;
+        display_tree(p -> same);
         display_tree(p -> right);
     }
 }
@@ -434,7 +509,7 @@ tree *search_in_tree(char key[LA_NAME], tree *p)
     }
 }
 
-void display_tree_search(char key[LA_NAME], tree *p)
+/*void display_tree_search(char key[LA_NAME], tree *p)
 {
     if(p)
     {
@@ -448,6 +523,19 @@ void display_tree_search(char key[LA_NAME], tree *p)
             cout << setw(23) << arr[p -> index] -> full_name_advocate << endl;
         }
         display_tree_search(key, p -> right);
+    }
+}*/
+
+void display_tree_search(char key[LA_NAME], tree *p)
+{
+    while(p)
+    {
+        cout << setw(5) << p -> index << ")"; //print the number of record
+        cout << setw(31) << arr[p -> index] -> full_name_depositor;
+        cout << setw(10) << arr[p -> index] -> deposit_sum;
+        cout << setw(10) << arr[p -> index] -> deposit_date;
+        cout << setw(23) << arr[p -> index] -> full_name_advocate << endl;
+        p = p -> same;
     }
 }
 
@@ -493,5 +581,6 @@ int main()
     date_search = search_in_tree(key, btree);
     display_tree_search(key, date_search);
 
+    delete_tree(btree);
     return 0;
 }
