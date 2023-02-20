@@ -12,6 +12,7 @@ const unsigned int LA_NAME = 22;
 const unsigned int MAX = 4000;
 
 bool wrong_key = false;
+bool VR = true, HR = true;
 
 //records from the file
 struct base
@@ -318,83 +319,8 @@ int name_comparision(char* str1, char* str2)
     return 0;
 }
 
-/*void create_tree(int i, tree **p)
-{
-    bool VR = true, HR = true;
-    tree *q;
-
-    if((*p) == nullptr)
-    {
-        *p = new tree;
-        (*p) -> index = i;
-        (*p) -> left = (*p) -> right = nullptr;
-        (*p) -> balance = 0;
-        VR = true;
-    }
-
-    else
-    {
-        if(name_comparision(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) <= 0)
-        {
-            create_tree(i, &(*p) -> left);
-            if(VR)
-            {
-                if((*p) -> balance == 0)
-                {
-                    q = (*p) -> left;
-                    (*p) -> left = q -> right;
-                    q -> right = (*p);
-                    (*p) = q;
-                    q -> balance = 1;
-                    VR = false;
-                    HR = true;
-                }
-                else
-                {
-                    (*p) -> balance = 0;
-                    VR = true;
-                    HR = false;
-                }
-            }
-            else HR = false;
-        }
-        else
-        {
-            if(name_comparision(arr[i] -> full_name_advocate, arr[(*p) -> index] -> full_name_advocate) > 0)
-            {
-                create_tree(i, &(*p) -> right);
-                if(VR)
-                {
-                    (*p) -> balance = 1;
-                    VR = false;
-                    HR = true;
-                }
-                else
-                {
-                    if(HR)
-                    {
-                        if((*p) -> balance > 0)
-                        {
-                            q = (*p) -> right;
-                            (*p) -> right = q -> left;
-                            (*p) -> balance = 0;
-                            q -> balance = 0;
-                            q -> left = (*p);
-                            (*p) = q;
-                            VR = true;
-                            HR = false;
-                        }
-                        else HR = false;
-                    }
-                }
-            }
-        }
-    }
-}*/
-
 void create_tree(int i, tree **p)
 {
-    bool VR = true, HR = true;
     tree *q;
 
     if((*p) == nullptr)
