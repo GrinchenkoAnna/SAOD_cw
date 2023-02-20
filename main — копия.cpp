@@ -435,23 +435,6 @@ tree *search_in_tree(char key[LA_NAME], tree *p)
     }
 }
 
-/*void display_tree_search(char key[LA_NAME], tree *p)
-{
-    if(p)
-    {
-        display_tree_search(key, p -> left);
-        if(name_comparision(key, arr[p -> index] -> full_name_advocate) == 0)
-        {
-            cout << setw(5) << p -> index << ")"; //print the number of record
-            cout << setw(31) << arr[p -> index] -> full_name_depositor;
-            cout << setw(10) << arr[p -> index] -> deposit_sum;
-            cout << setw(10) << arr[p -> index] -> deposit_date;
-            cout << setw(23) << arr[p -> index] -> full_name_advocate << endl;
-        }
-        display_tree_search(key, p -> right);
-    }
-}*/
-
 void display_tree_search(char key[LA_NAME], tree *p)
 {
     while(p)
